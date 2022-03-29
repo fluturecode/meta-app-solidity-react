@@ -34,5 +34,15 @@ contract Land is ERC721 {
     buildings.push(Building('Shopping Plaza 2', address(0x0), -10, 0,0,5,25,5));
   }
 
+  function mint(uint256 _id) public payable {
+    uint256 supply = totalSupply;
+    require(supply <= maxSupply);
+    require(buildings[_id - 1].owner == address(0x0));
+    require(msg.value >= 1 ether);
+
+    buildings[_id - 1].owner = msg.sender;
+    totalSupply = totalSupply + 1;
+    _safeMint(msg.sender, _id);
+  }
 
 }
