@@ -45,4 +45,17 @@ contract Land is ERC721 {
     _safeMint(msg.sender, _id);
   }
 
+  function transferFrom(
+    address from,
+    address to,
+    uint256 tokenId
+  ) public override {
+      require(
+        _isApprovedOrOwner(_msgSender(), tokenId),
+        'ERC721: transfer caller is not owne nor approved'
+      );
+
+      buildings[tokenId - 1].owner = to;
+      _transfer(from, to, tokenId);
+  }
 }
