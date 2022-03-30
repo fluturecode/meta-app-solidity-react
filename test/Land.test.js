@@ -14,12 +14,8 @@ contract('Land', ([owner1, owner2]) => {
   beforeEach(async () => {
     land = await Land.new(NAME, SYMBOL, COST);
   });
-  
-  describe('Deployment', () => {
-    beforeEach(async () => {
-      land = await Land.new(NAME, SYMBOL, COST);
-    });
 
+  describe('Deployment', () => {
     it('Returns the contract name', async () => {
       result = await land.name();
       result.should.equal(NAME);
@@ -54,7 +50,7 @@ contract('Land', ([owner1, owner2]) => {
 
       it('Updates the owner address', async () => {
         result = await land.ownerOf(1);
-        result.should.equal(owner);
+        result.should.equal(owner1);
       });
 
       it('Updates building details', async () => {
@@ -72,7 +68,7 @@ contract('Land', ([owner1, owner2]) => {
 
       it('Prevents mint with invalid ID', async () => {
         await land
-          .mint(100, { from: owner1, value: COST })
+          .mint(100, { from: owner1, value: 1 })
           .should.be.rejectedWith(EVM_REVERT);
       });
 
@@ -83,39 +79,39 @@ contract('Land', ([owner1, owner2]) => {
           .should.be.rejectedWith(EVM_REVERT);
       });
     });
+  });
 
-    describe('Transfers', () => {
-      describe('succes', () => {
-        beforeEach(async () => {
-          await land.mint(1, { from: owner1, value: COST });
-          await land.approve(owner2, 1, { from: owner1 });
-          await land.transferFrom(owner1, owner2, 1, { From: owner2 });
-        });
-
-        it('Updates the owner address', async () => {
-          result = await land.ownerOf(1);
-          result.should.equal(owner2);
-        });
-
-        it('Updates building details', async () => {
-          result = await land.getBuilding(1);
-          result.owner.should.equal(owner2);
-        });
+  describe('Transfers', () => {
+    describe('success', () => {
+      beforeEach(async () => {
+        await land.mint(1, { from: owner1, value: COST });
+        await land.approve(owner2, 1, { from: owner1 });
+        await land.transferFrom(owner1, owner2, 1, { from: owner2 });
       });
 
-      describe('failure', () => {
-        it('Prevents transfers without ownership', async () => {
-          await land
-            .transferFrom(owner1, owner2, 1, { from: owner2 })
-            .should.be.rejectedWith(EVM_REVERT);
-        });
+      it('Updates the owner address', async () => {
+        result = await land.ownerOf(1);
+        result.should.equal(owner2);
+      });
 
-        it('Prevents transfers without approval', async () => {
-          await land.mint(1, { from: owner1, value: COST });
-          await land
-            .transferFrom(owner1, owner2, 1, { from: owner2 })
-            .should.be.rejectedWith(EVM_REVERT);
-        });
+      it('Updates building details', async () => {
+        result = await land.getBuilding(1);
+        result.owner.should.equal(owner2);
+      });
+    });
+
+    describe('failure', () => {
+      it('Prevents transfers without ownership', async () => {
+        await land
+          .transferFrom(owner1, owner2, 1, { from: owner2 })
+          .should.be.rejectedWith(EVM_REVERT);
+      });
+
+      it('Prevents transfers without approval', async () => {
+        await land.mint(1, { from: owner1, value: COST });
+        await land
+          .transferFrom(owner1, owner2, 1, { from: owner2 })
+          .should.be.rejectedWith(EVM_REVERT);
       });
     });
   });
