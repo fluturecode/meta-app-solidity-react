@@ -1,6 +1,6 @@
 const Land = artifacts.require('Land');
 
-module.exports = function (deployer) {
+module.exports = async function (deployer) {
   
   const NAME = 'Fluture Buildings'
   const SYMBOOL = 'DUB'
