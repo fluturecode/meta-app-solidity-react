@@ -6,7 +6,7 @@ const EVM_REVERT = 'VM Exception while processing transaction: revert';
 
 contract('Land', ([owner1, owner2]) => {
   const NAME = 'Fluture Buildings';
-  const SYMBOOL = 'DUB';
+  const SYMBOL = 'DUB';
   const COST = web3.utils.toWei('1', 'ether');
 
   let land, result;
@@ -14,9 +14,13 @@ contract('Land', ([owner1, owner2]) => {
   beforeEach(async () => {
     land = await Land.new(NAME, SYMBOL, COST);
   });
-
+  
   describe('Deployment', () => {
-    it('returns the contract name', async () => {
+    beforeEach(async () => {
+      land = await Land.new(NAME, SYMBOL, COST);
+    });
+
+    it('Returns the contract name', async () => {
       result = await land.name();
       result.should.equal(NAME);
     });
